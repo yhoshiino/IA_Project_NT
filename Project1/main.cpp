@@ -65,9 +65,9 @@ int main() {
                 window.close();
         }
 
-        player.update(deltaTime, grid);
+        player.update(deltaTime, grid, player.position);
         for (auto& enemy : enemies) {
-            enemy.update(deltaTime, grid);
+            enemy.update(deltaTime, grid, player.position);
         }
 
         window.clear();

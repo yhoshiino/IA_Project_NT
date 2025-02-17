@@ -10,7 +10,7 @@ public:
     sf::Vector2f velocity;
     sf::Vector2f position;
     Entity(sf::Vector2f position, sf::Color color);
-    virtual void update(float deltaTime, Grid& grid) = 0;
+    virtual void update(float deltaTime, Grid& grid, sf::Vector2f playerPosition) = 0;
 };
 
 #endif // ENTITY_HPP
