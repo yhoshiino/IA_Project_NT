@@ -1,7 +1,7 @@
 #include "Entity.hpp"
 
-Entity::Entity(float x, float y, sf::Color color) {
+Entity::Entity(sf::Vector2f position, sf::Color color) {
     shape.setSize({ 35, 35 });
-    shape.setPosition(x, y);
+    shape.setPosition(position);
     shape.setFillColor(color);
 }

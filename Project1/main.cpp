@@ -48,8 +48,8 @@ int main() {
     }
 
 
-    Player player(200, 400);
-    vector<Enemy> enemies = { Enemy(100, 100), Enemy(700, 100) };
+    Player player(Vector2f(200, 400));
+    vector<Enemy> enemies = { Enemy(Vector2f(100, 100)), Enemy(Vector2f(700, 100)) };
     Grid grid;
     grid.loadFromFile("map.txt");
 

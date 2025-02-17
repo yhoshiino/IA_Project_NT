@@ -6,7 +6,7 @@
 class Enemy : public Entity {
 public:
     static constexpr float SPEED = 100.0f;
-    Enemy(float x, float y);
+    Enemy(sf::Vector2f position);
     void update(float deltaTime, Grid& grid) override;
 };
 

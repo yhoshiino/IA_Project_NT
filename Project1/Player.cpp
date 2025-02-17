@@ -2,7 +2,7 @@
 #include "Player.hpp"
 #include <SFML/Window/Keyboard.hpp>
 
-Player::Player(float x, float y) : Entity(x, y, sf::Color::Blue) {}
+Player::Player(sf::Vector2f position) : Entity(position, sf::Color::Blue) {}
 
 void Player::update(float deltaTime, Grid& grid) {
     sf::Vector2f movement(0.f, 0.f);

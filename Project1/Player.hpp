@@ -6,7 +6,7 @@
 class Player : public Entity {
 public:
     static constexpr float SPEED = 200.0f;
-    Player(float x, float y);
+    Player(sf::Vector2f position);
     void update(float deltaTime, Grid& grid) override;
 };
 
