@@ -2,30 +2,66 @@
 #include "Player.hpp"
 #include "Enemy.hpp"
 #include "Grid.hpp"
+#include "State.hpp"
+#include "PatrolAction.hpp"
+#include "FollowAction.hpp"
+#include "AttackAction.hpp"
+#include "FleeAction.hpp"
+#include "Planner.hpp"
 #include <vector>
+#include <memory>
 
+using namespace std;
+using namespace sf;
 
 const int WINDOW_WIDTH = 800;
 const int WINDOW_HEIGHT = 600;
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Jeu SFML - IA Ennemis");
+    RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Jeu SFML - IA Ennemis");
     window.setFramerateLimit(60);
 
+    // Initialize actions
+    vector<shared_ptr<Action>> actions = {
+        make_shared<PatrolAction>(),
+        make_shared<FollowAction>(),
+        make_shared<AttackAction>(),
+        make_shared<FleeAction>()
+    };
+
+    // Test different states
+    vector<State> testStates = {
+        State(false, false, false), // Patrolling
+        State(true, false, false),  // Following
+        State(true, true, false),   // Attacking
+        State(true, true, true)     // Fleeing
+    };
+
+    for (State& state : testStates) {
+        shared_ptr<Action> action = Plan(state, actions);
+        if (action) {
+            action->Execute(state);
+        }
+        else {
+            cout << "No action can be executed.\n";
+        }
+    }
+
+
     Player player(200, 400);
-    std::vector<Enemy> enemies = { Enemy(100, 100), Enemy(700, 100) };
+    vector<Enemy> enemies = { Enemy(100, 100), Enemy(700, 100) };
     Grid grid;
     grid.loadFromFile("map.txt");
 
-    sf::Clock clock;
+    Clock clock;
 
     while (window.isOpen()) {
-        sf::Time dt = clock.restart();
+        Time dt = clock.restart();
         float deltaTime = dt.asSeconds();
 
-        sf::Event event;
+        Event event;
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
+            if (event.type == Event::Closed)
                 window.close();
         }
 

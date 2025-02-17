@@ -147,16 +147,23 @@
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Action.hpp" />
+    <ClInclude Include="AttackAction.hpp" />
     <ClInclude Include="BTNode.hpp" />
     <ClInclude Include="ConditionNode.hpp" />
     <ClInclude Include="Enemy.hpp" />
     <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="FleeAction.hpp" />
+    <ClInclude Include="FollowAction.hpp" />
     <ClInclude Include="Grid.hpp" />
     <ClInclude Include="Node.hpp" />
     <ClInclude Include="Pathfinding.hpp" />
+    <ClInclude Include="PatrolAction.hpp" />
+    <ClInclude Include="Planner.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="SelectorNode.hpp" />
     <ClInclude Include="SequenceNode.hpp" />
+    <ClInclude Include="State.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
