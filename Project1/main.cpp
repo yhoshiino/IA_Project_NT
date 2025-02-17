@@ -73,8 +73,10 @@ int main() {
         window.clear();
         grid.draw(window);
         window.draw(player.shape);
-        for (const auto& enemy : enemies)
+        for (const auto& enemy : enemies) {
             window.draw(enemy.shape);
+        }
+            
         window.display();
     }
     return 0;
