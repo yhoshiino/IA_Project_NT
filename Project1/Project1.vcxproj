@@ -145,7 +145,6 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="EntityManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.hpp" />
@@ -165,7 +164,6 @@
     <ClInclude Include="SelectorNode.hpp" />
     <ClInclude Include="SequenceNode.hpp" />
     <ClInclude Include="State.hpp" />
-    <ClCompile Include="EntityManager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
