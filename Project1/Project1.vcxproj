@@ -138,17 +138,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="EnemyGoap.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Grid.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="Pathfinding.cpp" />
+    <ClCompile Include="Planner.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Action.hpp" />
     <ClInclude Include="AttackAction.hpp" />
     <ClInclude Include="Enemy.hpp" />
+    <ClInclude Include="EnemyGoap.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="FleeAction.hpp" />
     <ClInclude Include="FollowAction.hpp" />
