@@ -1,5 +1,5 @@
-#ifndef NODE_HPP
-#define NODE_HPP
+#ifndef NODE_H
+#define NODE_H
 
 #include <SFML/System/Vector2.hpp>
 using namespace std;
@@ -15,3 +15,5 @@ struct Node {
 };
 
 #endif
+
+

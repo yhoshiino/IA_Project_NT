@@ -2,10 +2,10 @@
 #include "Player.hpp"
 #include <SFML/Window/Keyboard.hpp>
 
-Player::Player(sf::Vector2f position) : Entity(position, sf::Color::Blue) {
+Player::Player(sf::Vector2i position) : Entity(position, sf::Color::Blue) {
 }
 
-void Player::update(float deltaTime, Grid& grid, sf::Vector2f playerPosition) {
+void Player::update(float deltaTime, Grid& grid, sf::Vector2i playerPosition) {
     sf::Vector2f movement(0.f, 0.f);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) movement.y -= SPEED * deltaTime;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) movement.y += SPEED * deltaTime;

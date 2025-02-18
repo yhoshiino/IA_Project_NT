@@ -7,13 +7,13 @@
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 
-class Enemy : public Entity {
+class EnemyFSM : public Entity {
 public:
     enum class State { Patrolling, Chasing, Returning };
 
-    Enemy(sf::Vector2f position);
+    EnemyFSM(sf::Vector2i position, float detectionRange);
 
-    void update(float deltaTime, Grid& grid, sf::Vector2f playerPosition) override;
+    void update(float deltaTime, Grid& grid, sf::Vector2i playerPosition) override;
 
 private:
     State currentState;

@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Player.hpp"
-#include "Enemy.hpp"
+#include "EnemyFSM.hpp"
 #include "Grid.hpp"
 #include "State.hpp"
 #include "PatrolAction.hpp"
@@ -48,8 +48,8 @@ int main() {
     }
 
 
-    Player player(Vector2f(200, 400));
-    vector<Enemy> enemies = { Enemy(Vector2f(100, 100)), Enemy(Vector2f(700, 100)) };
+    Player player(Vector2i(6, 11));
+    EnemyFSM FSM(Vector2i(3, 3), 1.f);
     Grid grid;
     grid.loadFromFile("map.txt");
 
@@ -66,16 +66,12 @@ int main() {
         }
 
         player.update(deltaTime, grid, player.position);
-        for (auto& enemy : enemies) {
-            enemy.update(deltaTime, grid, player.position);
-        }
-
         window.clear();
         grid.draw(window);
         window.draw(player.shape);
-        for (const auto& enemy : enemies) {
-            window.draw(enemy.shape);
-        }
+        window.draw(FSM.shape);
+        FSM.update(deltaTime, grid, player.position);
+
             
         window.display();
     }
