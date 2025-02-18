@@ -138,7 +138,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EnemyFSM.cpp" />
-    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyGoap.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Grid.cpp" />
@@ -151,7 +150,6 @@
   <ItemGroup>
     <ClInclude Include="Action.hpp" />
     <ClInclude Include="AttackAction.hpp" />
-    <ClInclude Include="Enemy.hpp" />
     <ClInclude Include="EnemyGoap.hpp" />
     <ClInclude Include="EnemyFSM.hpp" />
     <ClInclude Include="Entity.hpp" />

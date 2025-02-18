@@ -1,7 +1,7 @@
 #include "EnemyGoap.hpp"
 #include "Planner.hpp"
 
-EnemyGoap::EnemyGoap(sf::Vector2f position, bool sight, bool range, bool health)
+EnemyGoap::EnemyGoap(sf::Vector2i position, bool sight, bool range, bool health)
     : Entity(position, sf::Color::Red), currentState(sight, range, health) {
     InitializeActions();
 }
@@ -26,7 +26,7 @@ void EnemyGoap::ExecuteAction() {
     }
 }
 
-void EnemyGoap::update(float deltaTime, Grid& grid, sf::Vector2f playerPosition) {
+void EnemyGoap::update(float deltaTime, Grid& grid, sf::Vector2i playerPosition) {
     // Update the state based on some conditions (example logic)
     bool playerInSight = false/* logic to determine if the player is in sight */;
     bool playerInRange = false/* logic to determine if the player is in range */;
@@ -36,7 +36,7 @@ void EnemyGoap::update(float deltaTime, Grid& grid, sf::Vector2f playerPosition)
     // Execute the best action for the current state
     ExecuteAction();
 
-    // Update the enemy position based on velocity
-    position += velocity * deltaTime;
-    shape.setPosition(position);
+    //// Update the enemy position based on velocity
+    //position += velocity * deltaTime;
+    shape.setPosition(sf::Vector2f(position.x * 40, position.y * 40));
 }

@@ -18,11 +18,11 @@ private:
     std::vector<std::shared_ptr<Action>> actions;
 
 public:
-    EnemyGoap(sf::Vector2f position, bool sight, bool range, bool health);
+    EnemyGoap(sf::Vector2i position, bool sight, bool range, bool health);
     void InitializeActions();
     void UpdateState(bool sight, bool range, bool health);
     void ExecuteAction();
-    void update(float deltaTime, Grid& grid, sf::Vector2f playerPosition) override;
+    void update(float deltaTime, Grid& grid, sf::Vector2i playerPosition) override;
 };
 
 #endif

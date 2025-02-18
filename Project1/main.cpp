@@ -22,20 +22,9 @@ int main() {
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Jeu SFML - IA Ennemis");
     window.setFramerateLimit(60);
 
-    Player player(Vector2f(200, 400));
     vector<shared_ptr<EnemyGoap>> enemies = {
-        make_shared<EnemyGoap>(Vector2f(100, 100), false, false, false)
+        make_shared<EnemyGoap>(Vector2i(3, 10), false, false, false)
     };
-
-    for (State& state : testStates) {
-        shared_ptr<Action> action = Plan(state, actions);
-        if (action) {
-            action->Execute(state);
-        }
-        else {
-            cout << "No action can be executed.\n";
-        }
-    }
 
 
     Player player(Vector2i(6, 11));
