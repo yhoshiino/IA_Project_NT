@@ -8,6 +8,7 @@
 #include "AttackAction.hpp"
 #include "FleeAction.hpp"
 #include "Planner.hpp"
+#include "EnemyGoap.hpp"
 #include <vector>
 #include <memory>
 
@@ -21,20 +22,9 @@ int main() {
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Jeu SFML - IA Ennemis");
     window.setFramerateLimit(60);
 
-    // Initialize actions
-    vector<shared_ptr<Action>> actions = {
-        make_shared<PatrolAction>(),
-        make_shared<FollowAction>(),
-        make_shared<AttackAction>(),
-        make_shared<FleeAction>()
-    };
-
-    // Test different states
-    vector<State> testStates = {
-        State(false, false, false), // Patrolling
-        State(true, false, false),  // Following
-        State(true, true, false),   // Attacking
-        State(true, true, true)     // Fleeing
+    Player player(Vector2f(200, 400));
+    vector<shared_ptr<EnemyGoap>> enemies = {
+        make_shared<EnemyGoap>(Vector2f(100, 100), false, false, false)
     };
 
     for (State& state : testStates) {
@@ -77,4 +67,3 @@ int main() {
     }
     return 0;
 }
-
