@@ -1,7 +1,7 @@
 #include "EnemyFSM.hpp"
 #include <cmath>
 
-EnemyFSM::EnemyFSM(sf::Vector2i position, float detectionRange) : Entity(position, sf::Color::Red), detectionRadius(detectionRange) {
+EnemyFSM::EnemyFSM(sf::Vector2i position, float detectionRange, float Speed) : Entity(position, sf::Color::Red, Speed), detectionRadius(detectionRange) {
     currentState = State::Patrolling;
     currentWaypointIndex = 0;
     waypoints = {
@@ -13,11 +13,15 @@ EnemyFSM::EnemyFSM(sf::Vector2i position, float detectionRange) : Entity(positio
 }
 
 void EnemyFSM::update(float deltaTime, Grid& grid, sf::Vector2i playerPosition) {
+    return;
+}
+
+void EnemyFSM::updateFSM(float deltaTime, Grid& grid, Player& player) {
     switch (currentState) {
     case State::Patrolling:
-        if (detectPlayer(sf::Vector2f(playerPosition.x*CELL_SIZE, playerPosition.y*CELL_SIZE))) {
+        if (detectPlayer(sf::Vector2f(player.shape.getPosition().x * CELL_SIZE, player.shape.getPosition().y * CELL_SIZE))) {
             currentState = State::Chasing;
-            path = Pathfinding::findPath(grid, sf::Vector2i(position.x, position.y)/40, sf::Vector2i(playerPosition.x, playerPosition.y)/40);
+            path = Pathfinding::findPath(grid, sf::Vector2i(position.x, position.y) / 40, sf::Vector2i(player.shape.getPosition().x, player.shape.getPosition().y) / 40);
         }
         else {
             patrol(grid);
@@ -25,12 +29,12 @@ void EnemyFSM::update(float deltaTime, Grid& grid, sf::Vector2i playerPosition) 
         break;
 
     case State::Chasing:
-        if (!detectPlayer(sf::Vector2f(playerPosition.x * CELL_SIZE, playerPosition.y * CELL_SIZE))) {
+        if (!detectPlayer(sf::Vector2f(player.shape.getPosition().x * CELL_SIZE, player.shape.getPosition().y * CELL_SIZE))) {
             currentState = State::Returning;
-            path = Pathfinding::findPath(grid, sf::Vector2i(position.x, position.y)/40, sf::Vector2i(waypoints[currentWaypointIndex].x, waypoints[currentWaypointIndex].y));
+            path = Pathfinding::findPath(grid, sf::Vector2i(position.x, position.y) / 40, sf::Vector2i(waypoints[currentWaypointIndex].x, waypoints[currentWaypointIndex].y));
         }
         else {
-            chase(sf::Vector2f(playerPosition.x * CELL_SIZE, playerPosition.y * CELL_SIZE), grid);
+            chase(sf::Vector2f(player.shape.getPosition().x * CELL_SIZE, player.shape.getPosition().y * CELL_SIZE), grid);
         }
         break;
 
@@ -72,14 +76,18 @@ void EnemyFSM::chase(sf::Vector2f playerPosition, Grid& grid) {
 
 bool EnemyFSM::detectPlayer(sf::Vector2f playerPosition) {
     /*std::cout << "Detecting player..." << endl;*/
-    return distance(sf::Vector2f(position.x * 40, position.y * 40), playerPosition) < detectionRadius;
+    return distance(shape.getPosition(), playerPosition) < detectionRadius;
+ 
+    
 }
 
 void EnemyFSM::followPath() {
     if (!path.empty()) {
         position = sf::Vector2i(path.front().x, path.front().y);
-        shape.setPosition(position.x * 40, position.y * 40);
-        path.erase(path.begin());
+        shape.move(position.x * deltaTime * Speed, position.y * deltaTime * Speed);
+        if (currentWaypointIndex == currentWaypointIndex+1) {
+            path.erase(path.begin());
+        }
     }
 }
 

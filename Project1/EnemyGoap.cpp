@@ -2,7 +2,7 @@
 #include "Planner.hpp"
 
 EnemyGoap::EnemyGoap(sf::Vector2i position, bool sight, bool range, bool health)
-    : Entity(position, sf::Color::Red), currentState(sight, range, health) {
+    : Entity(position, sf::Color::Red, Speed), currentState(sight, range, health) {
     InitializeActions();
 }
 

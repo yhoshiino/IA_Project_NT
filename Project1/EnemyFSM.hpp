@@ -6,14 +6,20 @@
 #include "Grid.hpp"
 #include <vector>
 #include <SFML/System/Vector2.hpp>
+#include "Player.hpp"
 
 class EnemyFSM : public Entity {
 public:
     enum class State { Patrolling, Chasing, Returning };
 
-    EnemyFSM(sf::Vector2i position, float detectionRange);
+    EnemyFSM(sf::Vector2i position, float detectionRange, float Speed);
 
     void update(float deltaTime, Grid& grid, sf::Vector2i playerPosition) override;
+
+    void updateFSM(float deltaTime, Grid& grid, Player& player);
+
+    Time dt = clockE.restart();
+    float deltaTime = dt.asSeconds();
 
 private:
     State currentState;
@@ -21,6 +27,9 @@ private:
     std::vector<sf::Vector2f> waypoints;
     int currentWaypointIndex;
     float detectionRadius;
+
+    Clock clockE;
+
 
     void patrol(Grid& grid);
     void chase(sf::Vector2f playerPosition, Grid& grid);
