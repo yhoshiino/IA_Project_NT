@@ -4,7 +4,7 @@
 #include "Grid.hpp"
 #include "State.hpp"
 #include "PatrolAction.hpp"
-#include "FollowAction.hpp"
+#include "FollowAction.hpp".
 #include "AttackAction.hpp"
 #include "FleeAction.hpp"
 #include "Planner.hpp"
@@ -23,8 +23,8 @@ int main() {
     window.setFramerateLimit(60);
 
     Player player(Vector2i(6, 11));
-    EnemyFSM FSM(Vector2i(3, 3), 100.f, 1.f);
-    EnemyGoap goap(Vector2i(3, 10), false, false, false);
+    /*EnemyFSM FSM(Vector2i(3, 3), 1.f);*/
+    EnemyGoap goap(Vector2i(3, 10), false, false, false, 150.f,300.f);
     Grid grid;
     grid.loadFromFile("map.txt");
 
@@ -44,8 +44,10 @@ int main() {
         window.clear();
         grid.draw(window);
         window.draw(player.shape);
-        window.draw(FSM.shape);
-        FSM.updateFSM(deltaTime, grid, player);
+        /*window.draw(FSM.shape);*/
+        window.draw(goap.shape);
+        /*FSM.update(deltaTime, grid, player.position);*/
+        goap.updateGoap(deltaTime, grid, player);
 
             
         window.display();
