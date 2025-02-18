@@ -4,7 +4,7 @@
 #include "Grid.hpp"
 #include "State.hpp"
 #include "PatrolAction.hpp"
-#include "FollowAction.hpp"
+#include "FollowAction.hpp".
 #include "AttackAction.hpp"
 #include "FleeAction.hpp"
 #include "Planner.hpp"
@@ -22,13 +22,9 @@ int main() {
     RenderWindow window(VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Jeu SFML - IA Ennemis");
     window.setFramerateLimit(60);
 
-    vector<shared_ptr<EnemyGoap>> enemies = {
-        make_shared<EnemyGoap>(Vector2i(3, 10), false, false, false)
-    };
-
-
     Player player(Vector2i(6, 11));
-    EnemyFSM FSM(Vector2i(3, 3), 1.f);
+    /*EnemyFSM FSM(Vector2i(3, 3), 1.f);*/
+    EnemyGoap goap(Vector2i(3, 10), false, false, false, 150.f,300.f);
     Grid grid;
     grid.loadFromFile("map.txt");
 
@@ -48,8 +44,10 @@ int main() {
         window.clear();
         grid.draw(window);
         window.draw(player.shape);
-        window.draw(FSM.shape);
-        FSM.update(deltaTime, grid, player.position);
+        /*window.draw(FSM.shape);*/
+        window.draw(goap.shape);
+        /*FSM.update(deltaTime, grid, player.position);*/
+        goap.updateGoap(deltaTime, grid, player);
 
             
         window.display();
