@@ -18,6 +18,7 @@ public:
 
     void updateFSM(float deltaTime, Grid& grid, Player& player);
 
+    Clock clockE;
     Time dt = clockE.restart();
     float deltaTime = dt.asSeconds();
 
@@ -28,8 +29,7 @@ private:
     int currentWaypointIndex;
     float detectionRadius;
 
-    Clock clockE;
-
+    
 
     void patrol(Grid& grid);
     void chase(sf::Vector2f playerPosition, Grid& grid);
