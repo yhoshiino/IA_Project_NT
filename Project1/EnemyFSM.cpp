@@ -87,7 +87,7 @@ void EnemyFSM::followPath() {
 
         sf::Vector2f direction = sf::Vector2f(position.x * 40, position.y * 40) - shape.getPosition();
         float dist = distance(shape.getPosition(), sf::Vector2f(position.x * CELL_SIZE, position.y * CELL_SIZE));
-        if (dist > 1.0f) { // Vérifier si on doit encore avancer vers le point
+        if (dist > 3.0f) { // Vérifier si on doit encore avancer vers le point
             direction /= dist; // Normaliser
             sf::Vector2f movement = direction * Speed * deltaTime;
             shape.move(movement); // Déplacer progressivement
@@ -96,10 +96,6 @@ void EnemyFSM::followPath() {
         else {
             path.erase(path.begin()); // Supprimer le point atteint
         }
-
-        /*shape.setPosition(position.x * 40, position.y * 40);
-
-        path.erase(path.begin());*/
     }
 }
 

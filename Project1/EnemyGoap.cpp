@@ -1,5 +1,130 @@
 #include "EnemyGoap.hpp"
-#include "Planner.hpp"
+State::State(bool sight, bool range, bool health)
+    : playerInSight(sight), playerInRange(range), lowHealth(health) {
+}
+
+AttackAction::AttackAction() {
+    cost = 2;
+}
+
+bool AttackAction::CanExecute(const State& state)   {
+    return state.playerInSight && state.playerInRange && !state.lowHealth;
+}
+
+void AttackAction::Execute(State& state, Grid& grid, Vector2i enemyPosition, Vector2i endPosition)  {
+        cout << "Attacking player...\n";
+}
+
+FleeAction::FleeAction() {
+    cost = 4;
+}
+
+bool FleeAction::CanExecute(const State& state)  {
+    return state.lowHealth;
+}
+
+void FleeAction::Execute(State& state, Grid& grid, Vector2i enemyPosition, Vector2i endPosition)  {
+    cout << "Fleeing...\n";
+}
+
+FollowAction::FollowAction() {
+    cost = 3;
+}
+
+bool FollowAction::CanExecute(const State& state)  {
+    return state.playerInSight && !state.lowHealth;
+}
+
+void FollowAction::Execute(State& state, Grid& grid, Vector2i enemyPosition, Vector2i endPosition)  {
+    cout << "Following player...\n";
+}
+
+Clock clockE;
+Time dt = clockE.restart();
+float deltaTime = dt.asSeconds();
+
+float PatrolAction::distance(sf::Vector2f a, sf::Vector2f b) {
+    return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
+}
+
+PatrolAction::PatrolAction() {
+    cost = 4; // Patrol has the highest cost to be the default action
+}
+
+bool PatrolAction::CanExecute(const State& state)  {
+    return !state.lowHealth && !state.playerInSight && !state.playerInRange;
+}
+
+void PatrolAction::Execute(State& state, Grid& grid, EnemyGoap& enemy)  {
+    if (currentWaypointIndex < waypoints.size()) {
+        // Move towards the current waypoint
+        sf::Vector2f target = waypoints[currentWaypointIndex];
+        sf::Vector2f currentPos = Vector2f(enemyPosition);
+        float dx = target.x - currentPos.x;
+        float dy = target.y - currentPos.y;
+        float distance = sqrt(dx * dx + dy * dy);
+        
+        if (distance < 1.0f) {
+            // Reached the current waypoint, move to the next one
+            currentWaypointIndex++;
+        }
+        else {
+            // Move towards the target
+            enemy.shape.setPosition(currentPos.x + dx / distance, currentPos.y + dy / distance);
+        }
+    }
+    else {
+        // Completed the patrol path, reset to start again
+        currentWaypointIndex = 0;
+    }
+}
+
+void PatrolAction::setPath(const vector<sf::Vector2i>& newPath) {
+    path = newPath;
+    updateWaypoints();
+}
+
+void PatrolAction::updateWaypoints() {
+    waypoints.clear();
+    for (const auto& point : path) {
+        waypoints.push_back(sf::Vector2f(point.x * CELL_SIZE, point.y * CELL_SIZE));
+    }
+}
+
+void PatrolAction::followPath() {
+    deltaTime = clockE.restart().asSeconds();
+    if (!path.empty()) {
+        position = sf::Vector2i(path.front().x, path.front().y);
+
+        sf::Vector2f direction = sf::Vector2f(position.x * 40, position.y * 40) - shape.getPosition();
+        float dist = distance(shape.getPosition(), sf::Vector2f(position.x * CELL_SIZE, position.y * CELL_SIZE));
+        if (dist > 3.0f) { // Vérifier si on doit encore avancer vers le point
+            direction /= dist; // Normaliser
+            sf::Vector2f movement = direction * Speed * deltaTime;
+            shape.move(movement); // Déplacer progressivement
+            position = sf::Vector2i(shape.getPosition().x / 40, shape.getPosition().y / 40); // Mettre à jour la grille
+        }
+        else {
+            path.erase(path.begin()); // Supprimer le point atteint
+        }
+
+        shape.setPosition(position.x * 40, position.y * 40);
+
+        path.erase(path.begin());
+    }
+}
+
+shared_ptr<Action> Planner::Plan(const State& currentState, const vector<shared_ptr<Action>>& actions) {
+    shared_ptr<Action> bestAction = nullptr;
+    int lowestCost = INT_MAX;
+    for (const auto& action : actions) {
+        if (action->CanExecute(currentState) && action->cost < lowestCost) {
+            bestAction = action;
+            lowestCost = action->cost;
+        }
+    }
+    return bestAction;
+}
 
 EnemyGoap::EnemyGoap(Vector2i position, bool sight, bool range, bool health, float detectionRadius, float Health)
     : Entity(position, Color::Red, Speed), currentState(sight, range, health), detectionRadius(detectionRadius), health(Health) {
@@ -19,53 +144,46 @@ void EnemyGoap::UpdateState(bool sight, bool range, bool health) {
     currentState.lowHealth = health;
 }
 
-void EnemyGoap::ExecuteAction() {
-    shared_ptr<Action> bestAction = Plan(currentState, actions);
+void EnemyGoap::ExecuteAction(Grid& grid, Player& player) {
+    shared_ptr<Action> bestAction = Planner::Plan(currentState, actions);
     if (bestAction != nullptr) {
-        bestAction->Execute(currentState);
+        bestAction->Execute(currentState, grid, *this, player);
     }
 }
 
-bool EnemyGoap::distance(Vector2f a, Vector2f b) {
-	float dist =sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
-    if (dist <= detectionRadius) {
-		return true;
-    }
-	return false;
+bool EnemyGoap::distanceChase(Vector2f a, Vector2f b) {
+    float dist = sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
+    return dist <= detectionRadius;
 }
 
 float EnemyGoap::loseHealth() {
     health -= 1;
-	return health;
+    return health;
 }
 
 bool EnemyGoap::Flee() {
-    if (health <= 150) {
-        return true;
-    }
-    return false;
+    return health <= 150;
 }
 
 void EnemyGoap::update(float deltaTime, Grid& grid, Vector2i playerPosition) {
-    return;
+    // Implement update logic if needed
 }
 
-void EnemyGoap::updateGoap(float deltaTime, Grid& grid,Player& player) {
+void EnemyGoap::updateGoap(float deltaTime, Grid& grid, Player& player) {
     // Update the state based on some conditions (example logic)
     bool playerInSight = distance(shape.getPosition(), player.shape.getPosition());
     bool playerInRange = shape.getGlobalBounds().intersects(player.shape.getGlobalBounds());
     bool lowHealth = Flee();
     UpdateState(playerInSight, playerInRange, lowHealth);
-    
-    if (playerInRange==true) {
-		loseHealth();
-        cout << "Health: " << health << endl;
-	}
-    
-    // Execute the best action for the current state
-    ExecuteAction();
 
-    //// Update the enemy position based on velocity
-    //position += velocity * deltaTime;
+    if (playerInRange) {
+        loseHealth();
+        cout << "Health: " << health << endl;
+    }
+
+    // Execute the best action for the current state
+    ExecuteAction(grid, player);
+
+    // Update the enemy position based on velocity
     shape.setPosition(Vector2f(position.x * 40, position.y * 40));
 }
