@@ -2,12 +2,6 @@
 #include "Player.hpp"
 #include "EnemyFSM.hpp"
 #include "Grid.hpp"
-#include "State.hpp"
-#include "PatrolAction.hpp"
-#include "FollowAction.hpp".
-#include "AttackAction.hpp"
-#include "FleeAction.hpp"
-#include "Planner.hpp"
 #include "EnemyGoap.hpp"
 #include <vector>
 #include <memory>

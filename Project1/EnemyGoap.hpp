@@ -28,7 +28,7 @@ public:
     int cost;
 
     virtual bool CanExecute(const State& state) = 0;
-    virtual void Execute(State& state, Grid& grid, Vector2i enemyPosition, Vector2i endPosition) = 0;
+    virtual void Execute(State& state, Grid& grid, EnemyGoap& enemy, Player& player) = 0;
     virtual void followPath() = 0;
     virtual ~Action() {}
 };
@@ -39,7 +39,7 @@ public:
 
     bool CanExecute(const State& state) override;
 
-    void Execute(State& state, Grid& grid, Vector2i enemyPosition, Vector2i endPosition) override;
+    void Execute(State& state, Grid& grid, EnemyGoap& enemy, Player& player) override;
 };
 
 class FleeAction : public Action {
@@ -48,7 +48,7 @@ public:
 
     bool CanExecute(const State& state) override;
 
-    void Execute(State& state, Grid& grid, Vector2i enemyPosition, Vector2i endPosition) override;
+    void Execute(State& state, Grid& grid, EnemyGoap& enemy, Player& player) override;
 };
 
 class FollowAction : public Action {
@@ -57,7 +57,7 @@ public:
 
     bool CanExecute(const State& state) override;
 
-    void Execute(State& state, Grid& grid, Vector2i enemyPosition, Vector2i endPosition) override;
+    void Execute(State& state, Grid& grid, EnemyGoap& enemy, Player& player) override;
 };
 
 class PatrolAction : public Action {
@@ -95,7 +95,7 @@ private:
 class Planner {
 public:
     static std::shared_ptr<Action> Plan(const State& currentState, const std::vector<std::shared_ptr<Action>>& actions);
-
+};
 class EnemyGoap : public Entity {
 private:
     State currentState;
