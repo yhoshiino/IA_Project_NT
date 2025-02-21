@@ -58,14 +58,23 @@ public:
 
 class FollowAction : public Action {
 public:
+    Clock clockF;
+    Time dtF = clockF.restart();
+    float deltaTime = dtF.asSeconds();
+
     FollowAction();
 
     bool CanExecute(const State& state) override;
 
     void Execute(State& state, Grid& grid, Player& player, EnemyGoap& agent) override;
 
+    float distanceFollow(sf::Vector2f a, sf::Vector2f b);
+
     void followPath(EnemyGoap& goap) override;
+private:
+    std::vector<sf::Vector2i> path;
 };
+
 
 class PatrolAction : public Action {
 public:
@@ -106,7 +115,7 @@ private:
     float detectionRadius;
     float health;
 public:
-    EnemyGoap(sf::Vector2i position, bool sight, bool range, bool health, float detectionRadius, float Health);
+    EnemyGoap(sf::Vector2i position, bool sight, bool range, bool health, float detectionRadius, float Health, float Speed);
     void InitializeActions();
     void UpdateState(bool sight, bool range, bool health);
     void ExecuteAction(Grid& grid, Player& player);

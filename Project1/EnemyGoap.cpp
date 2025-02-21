@@ -44,16 +44,41 @@ bool FollowAction::CanExecute(const State& state)  {
 }
 
 void FollowAction::Execute(State& state, Grid& grid, Player& player, EnemyGoap& agent) {
-    cout << "Following player...\n";
+    deltaTime = clockF.restart().asSeconds(); // Calculate deltaTime once per frame
+    cout << "chase\n";
+    if (path.empty()) {
+        path = Pathfinding::findPath(grid, Vector2i(agent.position.x, agent.position.y), Vector2i(player.position.x, player.position.y));
+        cout << "Path calculated." << endl;
+    }
+    followPath(agent);
+}
+
+float FollowAction::distanceFollow(Vector2f a, Vector2f b) {
+    return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
 }
 
 void FollowAction::followPath(EnemyGoap& goap) {
-    return;
+    if (!path.empty()) {
+        goap.position = Vector2i(path.front().x, path.front().y);
+
+        Vector2f direction = Vector2f(goap.position.x * 40, goap.position.y * 40) - goap.shape.getPosition();
+        float dist = distanceFollow(goap.shape.getPosition(), Vector2f(goap.position.x * CELL_SIZE, goap.position.y * CELL_SIZE));
+        if (dist > 3.0f) { // Vérifier si on doit encore avancer vers le point
+            direction /= dist; // Normaliser
+            Vector2f movement = direction * goap.Speed * deltaTime;
+            goap.shape.move(movement); // Déplacer progressivement
+            goap.position = Vector2i(goap.shape.getPosition().x / 40, goap.shape.getPosition().y / 40); // Mettre à jour la grille
+
+        }
+        else {
+            path.erase(path.begin()); // Supprimer le point atteint
+        }
+    }
 }
 
+
 Clock clockE;
-Time dt = clockE.restart();
-float deltaTime = dt.asSeconds();
+float deltaTime;
 
 float PatrolAction::distance(Vector2f a, Vector2f b) {
     return sqrt(pow(b.x - a.x, 2) + pow(b.y - a.y, 2));
@@ -70,25 +95,28 @@ PatrolAction::PatrolAction() {
     };
 }
 
-bool PatrolAction::CanExecute(const State& state)  {
+bool PatrolAction::CanExecute(const State& state) {
     return !state.lowHealth && !state.playerInSight && !state.playerInRange;
 }
 
 void PatrolAction::Execute(State& state, Grid& grid, Player& player, EnemyGoap& agent) {
-    if (path.empty()) {
-        path = Pathfinding::findPath(grid, agent.position, sf::Vector2i(waypoints[currentWaypointIndex].x, waypoints[currentWaypointIndex].y));
-        std::cout << "Path calculated." << endl;
+    deltaTime = clockE.restart().asSeconds(); // Calculate deltaTime once per frame
 
-        std::cout << currentWaypointIndex << endl;
+    if (path.empty()) {
+        path = Pathfinding::findPath(grid, agent.position, Vector2i(waypoints[currentWaypointIndex].x, waypoints[currentWaypointIndex].y));
+        cout << "Path calculated." << endl;
+
+        cout << currentWaypointIndex << endl;
     }
 
     followPath(agent);
+    /*cout << "following path" << endl;*/
 
-    if (distance(sf::Vector2f(agent.position.x * 40, agent.position.y * 40), sf::Vector2f(waypoints[currentWaypointIndex].x * 40, waypoints[currentWaypointIndex].y * 40)) < 5.0f) {
+    if (distance(Vector2f(agent.position.x * 40, agent.position.y * 40), Vector2f(waypoints[currentWaypointIndex].x * 40, waypoints[currentWaypointIndex].y * 40)) < 5.0f) {
         currentWaypointIndex = (currentWaypointIndex + 1) % waypoints.size();
+        cout << currentWaypointIndex << endl;
     }
 }
-
 
 void PatrolAction::updateWaypoints() {
     waypoints.clear();
@@ -103,17 +131,17 @@ void PatrolAction::setPath(const vector<Vector2i>& newPath) {
 }
 
 void PatrolAction::followPath(EnemyGoap& goap) {
-    deltaTime = clockE.restart().asSeconds();
     if (!path.empty()) {
-        goap.position = sf::Vector2i(path.front().x, path.front().y);
+        goap.position = Vector2i(path.front().x, path.front().y);
 
-        sf::Vector2f direction = sf::Vector2f(goap.position.x * 40, goap.position.y * 40) - goap.shape.getPosition();
-        float dist = distance(goap.shape.getPosition(), sf::Vector2f(goap.position.x * CELL_SIZE, goap.position.y * CELL_SIZE));
+        Vector2f direction = Vector2f(goap.position.x * 40, goap.position.y * 40) - goap.shape.getPosition();
+        float dist = distance(goap.shape.getPosition(), Vector2f(goap.position.x * CELL_SIZE, goap.position.y * CELL_SIZE));
         if (dist > 3.0f) { // Vérifier si on doit encore avancer vers le point
             direction /= dist; // Normaliser
-            sf::Vector2f movement = direction * goap.Speed * deltaTime;
+            Vector2f movement = direction * goap.Speed * deltaTime;
             goap.shape.move(movement); // Déplacer progressivement
-            goap.position = sf::Vector2i(goap.shape.getPosition().x / 40, goap.shape.getPosition().y / 40); // Mettre à jour la grille
+            goap.position = Vector2i(goap.shape.getPosition().x / 40, goap.shape.getPosition().y / 40); // Mettre à jour la grille
+            
         }
         else {
             path.erase(path.begin()); // Supprimer le point atteint
@@ -133,7 +161,7 @@ shared_ptr<Action> Planner::Plan(const State& currentState, const vector<shared_
     return bestAction;
 }
 
-EnemyGoap::EnemyGoap(Vector2i position, bool sight, bool range, bool health, float detectionRadius, float Health)
+EnemyGoap::EnemyGoap(Vector2i position, bool sight, bool range, bool health, float detectionRadius, float Health, float Speed)
     : Entity(position, Color::Red, Speed), currentState(sight, range, health), detectionRadius(detectionRadius), health(Health) {
     InitializeActions();
 }
@@ -190,7 +218,4 @@ void EnemyGoap::updateGoap(float deltaTime, Grid& grid, Player& player) {
 
     // Execute the best action for the current state
     ExecuteAction(grid, player);
-
-    // Update the enemy position based on velocity
-    shape.setPosition(Vector2f(position.x * 40, position.y * 40));
 }

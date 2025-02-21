@@ -18,7 +18,7 @@ int main() {
 
     Player player(Vector2i(6, 11));
     EnemyFSM FSM(Vector2i(3, 3), 200.f, 200.f);
-    EnemyGoap goap(Vector2i(3, 10), false, false, false, 150.f,300.f);
+    EnemyGoap goap(Vector2i(3, 3), false, false, false, 150.f,300.f, 150.f);
     Grid grid;
     grid.loadFromFile("map.txt");
 
@@ -38,10 +38,10 @@ int main() {
         window.clear();
         grid.draw(window);
         window.draw(player.shape);
-        window.draw(FSM.shape);
-        FSM.updateFSM(deltaTime, grid, player);
-        //window.draw(goap.shape);
-        //goap.updateGoap(deltaTime, grid, player);
+        /*window.draw(FSM.shape);
+        FSM.updateFSM(deltaTime, grid, player);*/
+        window.draw(goap.shape);
+        goap.updateGoap(deltaTime, grid, player);
 
             
         window.display();
