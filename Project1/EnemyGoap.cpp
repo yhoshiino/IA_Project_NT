@@ -88,10 +88,10 @@ PatrolAction::PatrolAction() {
     cost = 4; // Patrol has the highest cost to be the default action
     currentWaypointIndex = 0;
     waypoints = {
-    {3, 3},
-    {6, 3},
-    {6, 6},
-    {3, 6}
+    {3, 10},
+    {6, 10},
+    {6, 13},
+    {3, 13}
     };
 }
 
