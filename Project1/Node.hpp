@@ -2,8 +2,6 @@
 #define NODE_H
 
 #include <SFML/System/Vector2.hpp>
-using namespace std;
-using namespace sf;
 
 struct Node {
     sf::Vector2i position;
@@ -15,5 +13,3 @@ struct Node {
 };
 
 #endif
-
-

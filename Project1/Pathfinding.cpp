@@ -17,10 +17,6 @@ std::vector<sf::Vector2i> Pathfinding::findPath(Grid& grid, sf::Vector2i start, 
         Node* current = openList.front();
         openList.erase(openList.begin());
 
-        //if (current->position.x < 0 || current->position.x >= GRID_WIDTH || current->position.y < 0 || current->position.y >= GRID_HEIGHT) {
-        //    continue; // Ignorez les positions invalides
-        //}
-
         if (current->position == end) {
             std::vector<sf::Vector2i> path;
             while (current) {
@@ -68,5 +64,3 @@ std::vector<sf::Vector2i> Pathfinding::findPath(Grid& grid, sf::Vector2i start, 
 
     return {};
 }
-
-

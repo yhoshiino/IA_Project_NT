@@ -10,13 +10,17 @@
 
 class EnemyFSM : public Entity {
 public:
-    enum class State { Patrolling, Chasing, Returning };
+    enum class State { Patrolling, Chasing, Returning, Fleeing };
 
     EnemyFSM(sf::Vector2i position, float detectionRange, float Speed);
 
     void update(float deltaTime, Grid& grid, sf::Vector2i playerPosition) override;
 
     void updateFSM(float deltaTime, Grid& grid, Player& player);
+
+    void colision(Player& player);
+
+    void flee(Grid& grid, Player& player);
 
     Clock clockE;
     Time dt = clockE.restart();
@@ -28,7 +32,7 @@ private:
     std::vector<sf::Vector2f> waypoints;
     int currentWaypointIndex;
     float detectionRadius;
-
+    int health;
     
 
     void patrol(Grid& grid);

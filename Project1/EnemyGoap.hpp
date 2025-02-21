@@ -8,9 +8,12 @@
 #include "Entity.hpp"
 #include "Player.hpp"
 #include "Grid.hpp"
+#include "Pathfinding.hpp"
 
 using namespace sf;
 using namespace std;
+
+class EnemyGoap;
 
 class State {
 public:
@@ -18,9 +21,7 @@ public:
     bool playerInRange;
     bool lowHealth;
 
-    State(bool sight, bool range, bool health)
-        : playerInSight(sight), playerInRange(range), lowHealth(health) {
-    }
+    State(bool sight, bool range, bool health);
 };
 
 class Action {
@@ -28,8 +29,8 @@ public:
     int cost;
 
     virtual bool CanExecute(const State& state) = 0;
-    virtual void Execute(State& state, Grid& grid, EnemyGoap& enemy, Player& player) = 0;
-    virtual void followPath() = 0;
+    virtual void Execute(State& state, Grid& grid, Player& player, EnemyGoap& agent) = 0;
+    virtual void followPath(EnemyGoap& goap) = 0;
     virtual ~Action() {}
 };
 
@@ -39,7 +40,9 @@ public:
 
     bool CanExecute(const State& state) override;
 
-    void Execute(State& state, Grid& grid, EnemyGoap& enemy, Player& player) override;
+    void Execute(State& state, Grid& grid, Player& player, EnemyGoap& agent) override;
+
+    void followPath(EnemyGoap& goap) override;
 };
 
 class FleeAction : public Action {
@@ -48,7 +51,9 @@ public:
 
     bool CanExecute(const State& state) override;
 
-    void Execute(State& state, Grid& grid, EnemyGoap& enemy, Player& player) override;
+    void Execute(State& state, Grid& grid, Player& player, EnemyGoap& agent) override;
+
+    void followPath(EnemyGoap& goap) override;
 };
 
 class FollowAction : public Action {
@@ -57,12 +62,14 @@ public:
 
     bool CanExecute(const State& state) override;
 
-    void Execute(State& state, Grid& grid, EnemyGoap& enemy, Player& player) override;
+    void Execute(State& state, Grid& grid, Player& player, EnemyGoap& agent) override;
+
+    void followPath(EnemyGoap& goap) override;
 };
 
 class PatrolAction : public Action {
 public:
-    class EnemyGoap;
+
     Clock clockE;
     Time dt = clockE.restart();
     float deltaTime = dt.asSeconds();
@@ -73,18 +80,14 @@ public:
 
     bool CanExecute(const State& state) override;
 
-    void Execute(State& state, Grid& grid, EnemyGoap& enemy, Vector2i endPosition) override;
+    void Execute(State& state, Grid& grid, Player& player, EnemyGoap& agent) override;
 
-    void setPath(const std::vector<sf::Vector2i>& newPath) {
-        path = newPath;
-        updateWaypoints();
-    }
+    void setPath(const std::vector<sf::Vector2i>& newPath);
+
 
     void updateWaypoints();
-    
-    float distance(Vector2f a, Vector2f b);
 
-    void followPath();
+    void followPath(EnemyGoap& goap) override;
 
 private:
     std::vector<sf::Vector2i> path;
